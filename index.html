@@ -400,6 +400,38 @@
       padding: 24px;
       line-height: 1.6;
     }
+
+    input[type="text"],
+    input[type="tel"] {
+      width: 100%;
+      background: #112038;
+      border: 1px solid rgba(196,158,82,0.25);
+      border-radius: 8px;
+      padding: 14px 16px;
+      color: #f0e8d8;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="tel"]:focus { border-color: rgba(196,158,82,0.6); }
+
+    input[type="text"]::placeholder,
+    input[type="tel"]::placeholder { color: rgba(240,232,216,0.3); }
+
+    input[type="text"].error,
+    input[type="tel"].error,
+    select.error { border-color: #e05c5c !important; }
+
+    .error-msg {
+      font-size: 11px;
+      color: #e07070;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .error-msg.show { display: block; }
   </style>
 </head>
 <body>
@@ -419,10 +451,74 @@
     </div>
   </div>
 
-  <!-- FORMULÁRIO -->
-  <div class="calc-section" id="calc-form">
-    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:20%"></div></div>
-    <p class="step-label">Passo 1 de 3</p>
+  <!-- ETAPA 1: DADOS DO CLIENTE -->
+  <div class="calc-section" id="client-form">
+    <div class="progress-bar"><div class="progress-fill" id="progress-client" style="width:15%"></div></div>
+    <p class="step-label">Passo 1 de 4</p>
+    <h2 class="step-title">Seus dados de contato</h2>
+
+    <div class="field-group">
+      <label class="field-label">Nome completo</label>
+      <input type="text" id="client-nome" placeholder="Seu nome">
+      <p class="error-msg" id="err-nome">Por favor, informe seu nome.</p>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Telefone / WhatsApp</label>
+      <input type="tel" id="client-telefone" placeholder="(00) 00000-0000">
+      <p class="error-msg" id="err-telefone">Por favor, informe seu telefone.</p>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Nome da empresa</label>
+      <input type="text" id="client-empresa" placeholder="Razão social ou nome fantasia">
+      <p class="error-msg" id="err-empresa">Por favor, informe o nome da empresa.</p>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Estado (UF)</label>
+      <select id="client-estado">
+        <option value="">Selecione o estado...</option>
+        <option value="AC">Acre</option>
+        <option value="AL">Alagoas</option>
+        <option value="AP">Amapá</option>
+        <option value="AM">Amazonas</option>
+        <option value="BA">Bahia</option>
+        <option value="CE">Ceará</option>
+        <option value="DF">Distrito Federal</option>
+        <option value="ES">Espírito Santo</option>
+        <option value="GO">Goiás</option>
+        <option value="MA">Maranhão</option>
+        <option value="MT">Mato Grosso</option>
+        <option value="MS">Mato Grosso do Sul</option>
+        <option value="MG">Minas Gerais</option>
+        <option value="PA">Pará</option>
+        <option value="PB">Paraíba</option>
+        <option value="PR">Paraná</option>
+        <option value="PE">Pernambuco</option>
+        <option value="PI">Piauí</option>
+        <option value="RJ">Rio de Janeiro</option>
+        <option value="RN">Rio Grande do Norte</option>
+        <option value="RS">Rio Grande do Sul</option>
+        <option value="RO">Rondônia</option>
+        <option value="RR">Roraima</option>
+        <option value="SC">Santa Catarina</option>
+        <option value="SP">São Paulo</option>
+        <option value="SE">Sergipe</option>
+        <option value="TO">Tocantins</option>
+      </select>
+      <p class="error-msg" id="err-estado">Por favor, selecione o estado.</p>
+    </div>
+
+    <button class="calc-btn" onclick="avancarCalculo()">
+      Continuar para o cálculo →
+    </button>
+  </div>
+
+  <!-- ETAPA 2: CÁLCULO -->
+  <div class="calc-section" id="calc-form" style="display:none;">
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:40%"></div></div>
+    <p class="step-label">Passo 2 de 4</p>
     <h2 class="step-title">Dados da sua empresa</h2>
 
     <div class="field-group">
@@ -536,6 +632,7 @@
 <script>
   const fatSlider = document.getElementById('faturamento');
   const selections = { regime: 'lucro_real', anos: '10+' };
+  const clientData = {};
 
   function getFat(v) {
     if(v<=10) return v*100000;
@@ -551,7 +648,7 @@
 
   fatSlider.addEventListener('input', function() {
     document.getElementById('fat-display').textContent = fmt(getFat(parseInt(this.value)));
-    document.getElementById('progress').style.width = '40%';
+    document.getElementById('progress').style.width = '60%';
   });
 
   function selectCard(el) {
@@ -559,14 +656,51 @@
     document.querySelectorAll('[data-group="'+group+'"]').forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
     selections[group] = el.dataset.val;
-    document.getElementById('progress').style.width = '70%';
+    document.getElementById('progress').style.width = '80%';
+  }
+
+  function setError(fieldId, errId, show) {
+    const field = document.getElementById(fieldId);
+    const err = document.getElementById(errId);
+    if(show) {
+      field.classList.add('error');
+      err.classList.add('show');
+    } else {
+      field.classList.remove('error');
+      err.classList.remove('show');
+    }
+  }
+
+  function avancarCalculo() {
+    const nome = document.getElementById('client-nome').value.trim();
+    const telefone = document.getElementById('client-telefone').value.trim();
+    const empresa = document.getElementById('client-empresa').value.trim();
+    const estado = document.getElementById('client-estado').value;
+
+    let valid = true;
+    setError('client-nome', 'err-nome', !nome);
+    setError('client-telefone', 'err-telefone', !telefone);
+    setError('client-empresa', 'err-empresa', !empresa);
+    setError('client-estado', 'err-estado', !estado);
+    if(!nome || !telefone || !empresa || !estado) valid = false;
+
+    if(!valid) return;
+
+    clientData.nome = nome;
+    clientData.telefone = telefone;
+    clientData.empresa = empresa;
+    clientData.estado = estado;
+
+    document.getElementById('client-form').style.display = 'none';
+    document.getElementById('calc-form').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function calcular() {
     const setor = document.getElementById('setor').value;
     if(!setor) {
-      document.getElementById('setor').style.borderColor = '#c49e52';
-      setTimeout(() => document.getElementById('setor').style.borderColor = '', 2000);
+      document.getElementById('setor').classList.add('error');
+      setTimeout(() => document.getElementById('setor').classList.remove('error'), 2000);
       return;
     }
     const fat = getFat(parseInt(fatSlider.value));
@@ -581,8 +715,15 @@
     document.getElementById('result-total').textContent = 'R$ ' + total.toLocaleString('pt-BR');
     document.getElementById('m1').textContent = 'R$ ' + mensal.toLocaleString('pt-BR');
 
-    // Atualiza o link do WhatsApp com o valor calculado
-    const msg = encodeURIComponent('Olá, fiz a calculadora da Vertíce Compliance e meu potencial estimado é de R$ ' + total.toLocaleString('pt-BR') + '. Gostaria de iniciar uma análise.');
+    // Atualiza o link do WhatsApp com dados do cliente e valor calculado
+    const msg = encodeURIComponent(
+      'Olá! Me chamo ' + clientData.nome +
+      ', da empresa ' + clientData.empresa +
+      ' (' + clientData.estado + ').' +
+      ' Fiz a calculadora da Vertíce Compliance e meu potencial estimado é de R$ ' +
+      total.toLocaleString('pt-BR') +
+      '. Gostaria de iniciar uma análise. Tel: ' + clientData.telefone
+    );
     document.getElementById('cta-link').href = 'https://wa.me/55XXXXXXXXXXX?text=' + msg;
 
     document.getElementById('calc-form').style.display = 'none';
@@ -591,9 +732,10 @@
   }
 
   function resetCalc() {
-    document.getElementById('calc-form').style.display = 'block';
+    document.getElementById('client-form').style.display = 'block';
+    document.getElementById('calc-form').style.display = 'none';
     document.getElementById('result-section').classList.remove('show');
-    document.getElementById('progress').style.width = '20%';
+    document.getElementById('progress-client').style.width = '15%';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 </script>
