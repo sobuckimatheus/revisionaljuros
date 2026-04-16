@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Créditos PIS/COFINS — Vertíce Compliance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Outfit', sans-serif; background: #0a1628; color: #f0e8d8; }
+
+    .vc-wrap { min-height: 100vh; }
+
+    .hero {
+      background: #0d1f3c;
+      padding: 56px 24px 48px;
+      text-align: center;
+      border-bottom: 1px solid rgba(196,158,82,0.2);
+    }
+
+    .logo-mark { width: 48px; height: 48px; margin: 0 auto 20px; display: block; }
+
+    .brand {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 3px;
+      color: #c49e52;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 5vw, 46px);
+      font-weight: 700;
+      color: #f5ece0;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero h1 span { color: #c49e52; }
+
+    .hero p {
+      font-size: 15px;
+      color: rgba(240,232,216,0.65);
+      max-width: 480px;
+      margin: 0 auto 8px;
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    .urgency-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(196,158,82,0.12);
+      border: 1px solid rgba(196,158,82,0.35);
+      border-radius: 20px;
+      padding: 6px 16px;
+      font-size: 12px;
+      color: #c49e52;
+      font-weight: 500;
+      margin-top: 20px;
+    }
+
+    .urgency-dot {
+      width: 6px; height: 6px;
+      background: #c49e52;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%,100%{opacity:1;transform:scale(1)}
+      50%{opacity:.4;transform:scale(1.3)}
+    }
+
+    .calc-section {
+      padding: 40px 24px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .step-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: #c49e52;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .step-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: #f5ece0;
+      margin-bottom: 28px;
+    }
+
+    .field-group { margin-bottom: 24px; }
+
+    .field-label {
+      font-size: 13px;
+      color: rgba(240,232,216,0.6);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .field-label span { color: #c49e52; font-size: 11px; margin-left: 4px; }
+
+    select {
+      width: 100%;
+      background: #112038;
+      border: 1px solid rgba(196,158,82,0.25);
+      border-radius: 8px;
+      padding: 14px 40px 14px 16px;
+      color: #f0e8d8;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c49e52' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      cursor: pointer;
+    }
+
+    select option { background: #0d1f3c; color: #f0e8d8; }
+    select:focus { border-color: rgba(196,158,82,0.6); }
+
+    .range-value {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #c49e52;
+      margin-bottom: 10px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      background: rgba(196,158,82,0.15);
+      border-radius: 2px;
+      border: none;
+      outline: none;
+      padding: 0;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px; height: 20px;
+      background: #c49e52;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid #0a1628;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px; height: 20px;
+      background: #c49e52;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid #0a1628;
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 6px;
+      font-size: 11px;
+      color: rgba(240,232,216,0.35);
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid rgba(196,158,82,0.12);
+      margin: 32px 0;
+    }
+
+    .radio-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .radio-card {
+      border: 1px solid rgba(196,158,82,0.2);
+      border-radius: 8px;
+      padding: 14px;
+      cursor: pointer;
+      background: #0f1e35;
+      transition: all 0.2s;
+    }
+
+    .radio-card:hover { border-color: rgba(196,158,82,0.45); }
+
+    .radio-card.selected {
+      border-color: #c49e52;
+      background: rgba(196,158,82,0.1);
+    }
+
+    .radio-dot {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(196,158,82,0.4);
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    .radio-card.selected .radio-dot {
+      border-color: #c49e52;
+      background: #c49e52;
+    }
+
+    .rc-title { font-size: 14px; font-weight: 500; color: #f0e8d8; }
+    .rc-sub { font-size: 11px; color: rgba(240,232,216,0.45); margin-top: 2px; }
+
+    .progress-bar {
+      height: 2px;
+      background: rgba(196,158,82,0.12);
+      margin-bottom: 32px;
+      border-radius: 1px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #c49e52;
+      border-radius: 1px;
+      transition: width 0.5s ease;
+    }
+
+    .calc-btn {
+      display: block;
+      width: 100%;
+      background: #c49e52;
+      color: #0a1628;
+      border: none;
+      border-radius: 8px;
+      padding: 18px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      margin-top: 8px;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .calc-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* RESULT */
+    .result-section {
+      display: none;
+      padding: 0 24px 48px;
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    .result-section.show { display: block; }
+
+    .result-card {
+      background: #112038;
+      border: 1px solid rgba(196,158,82,0.35);
+      border-radius: 12px;
+      padding: 32px 28px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .result-eyebrow {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      color: #c49e52;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .result-amount {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 8vw, 64px);
+      font-weight: 700;
+      color: #f5ece0;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .result-desc {
+      font-size: 13px;
+      color: rgba(240,232,216,0.55);
+      line-height: 1.6;
+      max-width: 380px;
+      margin: 0 auto 20px;
+    }
+
+    .result-sub {
+      font-size: 11px;
+      color: rgba(196,158,82,0.6);
+      font-style: italic;
+    }
+
+    .metrics-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .metric-box {
+      background: #0f1e35;
+      border: 1px solid rgba(196,158,82,0.15);
+      border-radius: 8px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .metric-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #c49e52;
+      margin-bottom: 4px;
+    }
+
+    .metric-lbl {
+      font-size: 11px;
+      color: rgba(240,232,216,0.45);
+      line-height: 1.4;
+    }
+
+    .warning-box {
+      background: rgba(196,158,82,0.06);
+      border-left: 3px solid #c49e52;
+      border-radius: 0 8px 8px 0;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+    }
+
+    .warning-box p {
+      font-size: 13px;
+      color: rgba(240,232,216,0.7);
+      line-height: 1.55;
+    }
+
+    .warning-box strong { color: #c49e52; font-weight: 500; }
+
+    .cta-btn {
+      display: block;
+      width: 100%;
+      background: #c49e52;
+      color: #0a1628;
+      border: none;
+      border-radius: 8px;
+      padding: 20px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      margin-bottom: 12px;
+      transition: opacity 0.2s, transform 0.15s;
+      text-decoration: none;
+    }
+
+    .cta-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .reset-btn {
+      display: block;
+      width: 100%;
+      background: #1a2e48;
+      color: #f0e8d8;
+      border: 1px solid rgba(196,158,82,0.3);
+      border-radius: 8px;
+      padding: 14px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      cursor: pointer;
+      text-align: center;
+      transition: opacity 0.2s;
+    }
+
+    .reset-btn:hover { opacity: 0.85; }
+
+    .footer-note {
+      text-align: center;
+      font-size: 11px;
+      color: rgba(240,232,216,0.3);
+      padding: 24px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+<div class="vc-wrap">
+
+  <div class="hero">
+    <svg class="logo-mark" viewBox="0 0 48 48" fill="none">
+      <path d="M24 4L40 36H8L24 4Z" stroke="#c49e52" stroke-width="1.5" fill="none"/>
+      <path d="M24 14L34 34H14L24 14Z" fill="rgba(196,158,82,0.15)" stroke="#c49e52" stroke-width="0.5"/>
+    </svg>
+    <p class="brand">Vertíce Compliance</p>
+    <h1>Sua empresa está deixando <span>dinheiro na mesa</span> sem saber</h1>
+    <p>Com a Reforma Tributária, 2026 é a última janela para recuperar créditos de PIS e COFINS. Descubra quanto a sua empresa pode reaver.</p>
+    <div class="urgency-pill">
+      <span class="urgency-dot"></span>
+      Janela fecha em 2027 — Calcule agora
+    </div>
+  </div>
+
+  <!-- FORMULÁRIO -->
+  <div class="calc-section" id="calc-form">
+    <div class="progress-bar"><div class="progress-fill" id="progress" style="width:20%"></div></div>
+    <p class="step-label">Passo 1 de 3</p>
+    <h2 class="step-title">Dados da sua empresa</h2>
+
+    <div class="field-group">
+      <label class="field-label">Faturamento anual estimado <span>(R$)</span></label>
+      <div class="range-value" id="fat-display">R$ 1.200.000</div>
+      <input type="range" id="faturamento" min="1" max="100" step="1" value="12">
+      <div class="range-labels"><span>R$ 100 mil</span><span>R$ 10 milhões+</span></div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="field-group">
+      <label class="field-label">Regime tributário</label>
+      <div class="radio-grid">
+        <div class="radio-card selected" data-group="regime" data-val="lucro_real" onclick="selectCard(this)">
+          <span class="radio-dot"></span><span class="rc-title">Lucro Real</span>
+          <div class="rc-sub">Maior potencial de crédito</div>
+        </div>
+        <div class="radio-card" data-group="regime" data-val="lucro_presumido" onclick="selectCard(this)">
+          <span class="radio-dot"></span><span class="rc-title">Lucro Presumido</span>
+          <div class="rc-sub">Regime cumulativo</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="field-group">
+      <label class="field-label">Setor de atuação</label>
+      <select id="setor">
+        <option value="">Selecione o setor...</option>
+        <option value="industria">Indústria / Manufatura</option>
+        <option value="agro">Agronegócio</option>
+        <option value="servicos">Serviços</option>
+        <option value="comercio">Comércio / Varejo</option>
+        <option value="saude">Saúde / Farmácia</option>
+        <option value="construcao">Construção Civil</option>
+        <option value="tecnologia">Tecnologia</option>
+        <option value="logistica">Logística / Transporte</option>
+      </select>
+    </div>
+
+    <hr class="divider">
+
+    <div class="field-group">
+      <label class="field-label">Há quantos anos a empresa opera?</label>
+      <div class="radio-grid">
+        <div class="radio-card" data-group="anos" data-val="1-3" onclick="selectCard(this)">
+          <span class="radio-dot"></span><span class="rc-title">1 a 3 anos</span>
+        </div>
+        <div class="radio-card" data-group="anos" data-val="4-9" onclick="selectCard(this)">
+          <span class="radio-dot"></span><span class="rc-title">4 a 9 anos</span>
+        </div>
+        <div class="radio-card selected" data-group="anos" data-val="10+" onclick="selectCard(this)">
+          <span class="radio-dot"></span><span class="rc-title">10 anos ou mais</span>
+        </div>
+        <div class="radio-card" data-group="anos" data-val="nao-sei" onclick="selectCard(this)">
+          <span class="radio-dot"></span><span class="rc-title">Não sei informar</span>
+        </div>
+      </div>
+    </div>
+
+    <button class="calc-btn" onclick="calcular()">
+      Calcular meu potencial de recuperação →
+    </button>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="result-section" id="result-section">
+    <div class="progress-bar"><div class="progress-fill" style="width:100%"></div></div>
+
+    <div class="result-card">
+      <p class="result-eyebrow">Estimativa de créditos não recuperados</p>
+      <div class="result-amount" id="result-total">R$ 0</div>
+      <p class="result-desc">Valor estimado que sua empresa pode ter direito a recuperar via PIS e COFINS nos últimos 5 anos.</p>
+      <p class="result-sub">* Estimativa com base no perfil informado. Análise técnica pode revelar valores maiores.</p>
+    </div>
+
+    <div class="metrics-row">
+      <div class="metric-box">
+        <div class="metric-val" id="m1">—</div>
+        <div class="metric-lbl">Crédito médio mensal estimado</div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-val">8 meses</div>
+        <div class="metric-lbl">Meses restantes para agir em 2026</div>
+      </div>
+    </div>
+
+    <div class="warning-box">
+      <p><strong>Atenção:</strong> Com a entrada da CBS em 2027, créditos do regime atual de PIS/COFINS <strong>não migram automaticamente</strong>. Valores não recuperados até o fim de 2026 poderão ser perdidos definitivamente.</p>
+    </div>
+
+    <!-- SUBSTITUA O href ABAIXO PELO LINK DO WHATSAPP OU FORMULÁRIO -->
+    <a id="cta-link" href="https://wa.me/55XXXXXXXXXXX?text=Ol%C3%A1%2C+gostaria+de+recuperar+meus+cr%C3%A9ditos+de+PIS+e+COFINS." target="_blank" class="cta-btn">
+      ↓ Quero recuperar esse valor
+    </a>
+
+    <button class="reset-btn" onclick="resetCalc()">
+      Refazer o cálculo com outros dados
+    </button>
+  </div>
+
+  <p class="footer-note">
+    Estimativas baseadas em médias setoriais e parâmetros do STJ/Receita Federal.<br>
+    Não constituem garantia de resultado. Análise técnica individualizada necessária.
+  </p>
+
+</div>
+
+<script>
+  const fatSlider = document.getElementById('faturamento');
+  const selections = { regime: 'lucro_real', anos: '10+' };
+
+  function getFat(v) {
+    if(v<=10) return v*100000;
+    if(v<=30) return 1000000+(v-10)*50000;
+    if(v<=60) return 2000000+(v-30)*100000;
+    return 5000000+(v-60)*125000;
+  }
+
+  function fmt(n) {
+    if(n>=1000000) return 'R$ '+(n/1000000).toFixed(1).replace('.',',')+'mi';
+    return 'R$ '+Math.round(n/1000)+' mil';
+  }
+
+  fatSlider.addEventListener('input', function() {
+    document.getElementById('fat-display').textContent = fmt(getFat(parseInt(this.value)));
+    document.getElementById('progress').style.width = '40%';
+  });
+
+  function selectCard(el) {
+    const group = el.dataset.group;
+    document.querySelectorAll('[data-group="'+group+'"]').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selections[group] = el.dataset.val;
+    document.getElementById('progress').style.width = '70%';
+  }
+
+  function calcular() {
+    const setor = document.getElementById('setor').value;
+    if(!setor) {
+      document.getElementById('setor').style.borderColor = '#c49e52';
+      setTimeout(() => document.getElementById('setor').style.borderColor = '', 2000);
+      return;
+    }
+    const fat = getFat(parseInt(fatSlider.value));
+    const taxaBase = { lucro_real: 0.0925, lucro_presumido: 0.0365 };
+    const setorMult = { industria:1.4, agro:1.5, servicos:0.7, comercio:1.1, saude:1.2, construcao:1.3, tecnologia:0.9, logistica:1.2 };
+    const periodos = { '1-3':3, '4-9':5, '10+':5, 'nao-sei':5 };
+    const pct = (taxaBase[selections.regime]||0.0925) * (setorMult[setor]||1) * 0.18;
+    const anos_n = periodos[selections.anos] || 5;
+    const total = Math.round(fat * pct * anos_n);
+    const mensal = Math.round(total / (anos_n * 12));
+
+    document.getElementById('result-total').textContent = 'R$ ' + total.toLocaleString('pt-BR');
+    document.getElementById('m1').textContent = 'R$ ' + mensal.toLocaleString('pt-BR');
+
+    // Atualiza o link do WhatsApp com o valor calculado
+    const msg = encodeURIComponent('Olá, fiz a calculadora da Vertíce Compliance e meu potencial estimado é de R$ ' + total.toLocaleString('pt-BR') + '. Gostaria de iniciar uma análise.');
+    document.getElementById('cta-link').href = 'https://wa.me/55XXXXXXXXXXX?text=' + msg;
+
+    document.getElementById('calc-form').style.display = 'none';
+    document.getElementById('result-section').classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function resetCalc() {
+    document.getElementById('calc-form').style.display = 'block';
+    document.getElementById('result-section').classList.remove('show');
+    document.getElementById('progress').style.width = '20%';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
